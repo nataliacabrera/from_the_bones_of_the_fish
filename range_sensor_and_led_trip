@@ -1,0 +1,43 @@
+/*
+* Ultrasonic Sensor HC-SR04 and Arduino Tutorial
+* by Natalia Cabrera using examples from by Dejan Nedelkovski, www.HowToMechatronics.com
+*
+*/
+// defines pins numbers
+const int trigPin = 9;
+const int echoPin = 10;
+// defines variables
+long duration;
+int distance;
+int transistorPin = 3; // PWM Pin 9 connected to the base of the transistor (to use with 12V LED strip)
+int sensorValue; // value mapped from the range sensor to 0 - 255
+
+
+void setup() {
+  pinMode(trigPin, OUTPUT); // Sets the trigPin as an Output
+  pinMode(echoPin, INPUT); // Sets the echoPin as an Input    
+  pinMode(transistorPin, OUTPUT); // set the transistor pin as output:
+  Serial.begin(9600); // Starts the serial communication
+}
+
+void loop() {
+  // Clears the trigPin
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+  // Sets the trigPin on HIGH state for 10 micro seconds
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+  // Reads the echoPin, returns the sound wave travel time in microseconds
+  duration = pulseIn(echoPin, HIGH);
+  // Calculating the distance, duration times the speed of sound in cm/
+  distance= duration*0.034/2;
+  // Prints the distance on the Serial Monitor
+  Serial.print("Distance: ");
+  Serial.println(distance);
+  
+  sensorValue = map(distance, 4, 400, 255, 0);
+  analogWrite(transistorPin, sensorValue);
+  Serial.print("led value: ");
+  Serial.println(sensorValue);
+}
